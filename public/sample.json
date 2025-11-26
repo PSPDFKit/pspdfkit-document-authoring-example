@@ -1,0 +1,59 @@
+{
+	"type": "https://pspdfkit.com/document-authoring/persistence/container",
+	"container": {
+		"document": {
+			"body": {
+				"sections": [
+					{
+						"elements": [
+							{
+								"type": "p",
+								"pPr": {
+									"styleId": "Heading 1",
+									"alignment": "center"
+								},
+								"elements": [
+									{
+										"type": "r",
+										"text": "Heading"
+									}
+								]
+							},
+							{
+								"type": "p",
+								"elements": [
+									{
+										"type": "r",
+										"text": "Simple paragraphs consist of one `r` typed element containing all the text."
+									}
+								]
+							},
+							{
+								"type": "p",
+								"elements": [
+									{
+										"type": "r",
+										"text": "There is "
+									},
+									{
+										"type": "r",
+										"rPr": {
+											"bold": true,
+											"color": "#ff0000",
+											"underline": true
+										},
+										"text": "formatted"
+									},
+									{
+										"type": "r",
+										"text": " text in this paragraph."
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		}
+	}
+}

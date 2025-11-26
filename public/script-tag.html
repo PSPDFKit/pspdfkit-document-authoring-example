@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document Authoring SDK</title>
+	</head>
+	<body>
+		<!--
+            IMPORTANT: An editor target element needs to have its `position` set to a value other than the default or `static`!
+                       If unsure use `relative`.
+         -->
+		<div id="editor" style="border: 1px solid black; width: 1024px; height: 600px; position: relative"></div>
+		<script src="https://document-authoring.cdn.nutrient.io/releases/document-authoring-1.9.1-umd.js"></script>
+		<script>
+			(async () => {
+				const docAuthSystem = await DocAuth.createDocAuthSystem({
+					// assets: { base: '<CUSTOM_DOCUMENT_AUTHORING_ASSETS_LOCATION>' },
+					// licenseKey: '<YOUR_LICENSE_KEY>',
+				});
+
+				const editor = await docAuthSystem.createEditor(document.getElementById('editor'), {
+					document: await docAuthSystem.createDocumentFromPlaintext('Hi there!'),
+				});
+
+				// Dev exports.
+
+				window.DocAuth = DocAuth;
+				window.docAuthSystem = docAuthSystem;
+				window.editor = editor;
+			})();
+		</script>
+	</body>
+</html>
