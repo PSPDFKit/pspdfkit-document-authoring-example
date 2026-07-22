@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Actions & Toolbar API Demo - Document Authoring SDK</title>
+		<style>
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				margin: 0;
+				padding: 20px;
+				background: #f5f5f5;
+				overflow-x: hidden;
+			}
+
+			.container {
+				max-width: 1400px;
+				margin: 0 auto;
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+				overflow: hidden;
+			}
+
+			.header {
+				background: #4636e3;
+				color: white;
+				padding: 20px;
+				text-align: center;
+			}
+
+			.header h1 {
+				margin: 0;
+				font-size: 24px;
+			}
+
+			.header p {
+				margin: 10px 0 0;
+				opacity: 0.9;
+			}
+
+			.controls {
+				padding: 20px;
+				border-bottom: 1px solid #e0e0e0;
+				position: relative;
+				z-index: 10;
+				background: white;
+			}
+
+			.control-section {
+				margin-bottom: 25px;
+				padding: 20px;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				background: #f9f9f9;
+			}
+
+			.control-section h3 {
+				margin: 0 0 15px;
+				color: #333;
+				font-size: 18px;
+				font-weight: 600;
+			}
+
+			.control-group {
+				display: flex;
+				gap: 12px;
+				flex-wrap: wrap;
+				margin-bottom: 15px;
+				align-items: center;
+			}
+
+			.control-group:last-child {
+				margin-bottom: 0;
+			}
+
+			button {
+				padding: 10px 16px;
+				border: 1px solid #ddd;
+				border-radius: 6px;
+				background: white;
+				cursor: pointer;
+				font-size: 14px;
+				font-weight: 500;
+				transition: all 0.2s;
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+			}
+
+			button:hover {
+				background: #f0f0f0;
+				transform: translateY(-1px);
+			}
+
+			button:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+				transform: none;
+			}
+
+			.primary {
+				background: #4636e3;
+				color: white;
+				border-color: #4636e3;
+			}
+
+			.primary:hover:not(:disabled) {
+				background: #3525d1;
+			}
+
+			.success {
+				background: #28a745;
+				color: white;
+				border-color: #28a745;
+			}
+
+			.success:hover:not(:disabled) {
+				background: #218838;
+			}
+
+			.warning {
+				background: #ffc107;
+				color: #212529;
+				border-color: #ffc107;
+			}
+
+			.warning:hover:not(:disabled) {
+				background: #e0a800;
+			}
+
+			.danger {
+				background: #dc3545;
+				color: white;
+				border-color: #dc3545;
+			}
+
+			.danger:hover:not(:disabled) {
+				background: #c82333;
+			}
+
+			select {
+				padding: 8px 12px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				background: white;
+				font-size: 14px;
+				min-width: 150px;
+			}
+
+			.form-row {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				flex-wrap: wrap;
+			}
+
+			.output {
+				background: #f8f9fa;
+				border: 1px solid #e0e0e0;
+				border-radius: 4px;
+				padding: 15px;
+				font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+				font-size: 12px;
+				white-space: pre-wrap;
+				margin-top: 15px;
+				max-height: 300px;
+				overflow-y: auto;
+				display: none;
+			}
+
+			.output.show,
+			.output[style*='block'] {
+				display: block !important;
+			}
+
+			.editor-container {
+				height: 500px;
+				border-top: 1px solid #e0e0e0;
+				position: relative;
+				overflow: hidden;
+			}
+
+			#editor {
+				width: 100%;
+				height: 100%;
+				border: none;
+				position: relative;
+				z-index: 1;
+			}
+
+			.status-section {
+				background: #f8f9fa;
+				padding: 20px;
+				border-top: 1px solid #e0e0e0;
+			}
+
+			.status-bar {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 15px;
+			}
+
+			.status-bar span {
+				font-weight: 500;
+				color: #333;
+			}
+
+			.current-items {
+				background: white;
+				border: 1px solid #e0e0e0;
+				border-radius: 4px;
+				padding: 15px;
+				max-height: 200px;
+				overflow-y: auto;
+			}
+
+			.current-items h4 {
+				margin: 0 0 10px;
+				color: #666;
+				font-size: 14px;
+			}
+
+			.current-items ul {
+				margin: 0;
+				padding-left: 20px;
+				font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+				font-size: 12px;
+				line-height: 1.4;
+			}
+
+			.current-items li {
+				margin-bottom: 4px;
+				color: #555;
+			}
+
+			.info-box {
+				background: #d1ecf1;
+				border: 1px solid #bee5eb;
+				border-radius: 4px;
+				padding: 15px;
+				margin-top: 15px;
+				display: none;
+			}
+
+			.info-box.show {
+				display: block;
+			}
+
+			.info-box p {
+				margin: 8px 0;
+			}
+
+			.info-box strong {
+				color: #0c5460;
+			}
+
+			/* Ensure SDK elements stay within bounds */
+			.container * {
+				max-width: 100%;
+				box-sizing: border-box;
+			}
+
+			/* Prevent any fixed/absolute positioned elements from SDK from covering controls */
+			.container > .controls {
+				position: relative !important;
+				z-index: 1000 !important;
+			}
+
+			/* Two column layout for larger screens */
+			@media (min-width: 1200px) {
+				.controls {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					gap: 20px;
+					align-items: start;
+				}
+
+				.status-section {
+					grid-column: 1 / -1;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<h1>Actions & Toolbar API Demo</h1>
+				<p>Interactive Actions and Toolbar Customization - Register Actions and Configure Toolbar</p>
+			</div>
+
+			<div class="controls">
+				<!-- Built-in Elements Control Section -->
+				<div class="control-section">
+					<h3>Built-in Elements Control</h3>
+					<div class="control-group">
+						<div class="form-row">
+							<label for="builtin-selector">Select Built-in Type:</label>
+							<select id="builtin-selector">
+								<option value="">Choose a built-in type...</option>
+							</select>
+							<button id="btn-add-builtin" class="success">Add Built-in</button>
+						</div>
+					</div>
+					<div class="control-group">
+						<button id="btn-add-separator" class="primary">Add Separator</button>
+						<button id="btn-delete-last" class="warning">Delete Last</button>
+						<button id="btn-clear-toolbar" class="danger">Clear Toolbar</button>
+					</div>
+				</div>
+
+				<!-- Action Element Control Section -->
+				<div class="control-section">
+					<h3>Custom Action Control</h3>
+					<div class="control-group">
+						<div class="form-row">
+							<label for="custom-action-selector">Select Custom Action:</label>
+							<select id="custom-action-selector">
+								<option value="">Choose a custom action...</option>
+							</select>
+							<button id="btn-register-sample-actions" class="secondary">Register Sample Actions</button>
+						</div>
+						<div class="form-row">
+							<button id="btn-add-action" class="success">Add Custom Action</button>
+						</div>
+					</div>
+					<div class="control-group">
+						<button id="btn-delete-last-action" class="warning">Delete Last</button>
+						<button id="btn-clear-toolbar-action" class="danger">Clear Toolbar</button>
+					</div>
+					<div id="action-instructions" class="info-box" style="display: none"></div>
+				</div>
+
+				<!-- Quick Presets Section -->
+				<div class="control-section">
+					<h3>Quick Presets</h3>
+					<div class="control-group">
+						<button id="btn-preset-minimal" class="primary">Essential Writing</button>
+						<button id="btn-preset-full" class="primary">Professional Editor</button>
+						<button id="btn-preset-empty" class="warning">Clean Slate</button>
+					</div>
+					<p style="margin-top: 10px; font-size: 14px; color: #666">
+						<strong>Essential Writing:</strong> Core tools for focused writing - styles, fonts, basic formatting, lists.<br />
+						<strong>Professional Editor:</strong> Complete editing suite with alignment, colors, tables, and utilities.<br />
+						<strong>Clean Slate:</strong> Empty toolbar for building custom configurations from scratch.
+					</p>
+				</div>
+
+				<!-- Configuration Display Section -->
+				<div class="control-section">
+					<h3>Configuration</h3>
+					<div class="control-group">
+						<button id="btn-show-config" class="primary">Show Config JSON</button>
+						<button id="btn-hide-config" class="warning">Hide Config</button>
+					</div>
+					<div class="output" id="config-output"></div>
+				</div>
+			</div>
+
+			<div class="editor-container">
+				<div id="editor"></div>
+			</div>
+
+			<div class="status-section">
+				<div class="status-bar">
+					<div>
+						<strong>Toolbar Status:</strong>
+						<span id="toolbar-status">Loading...</span>
+					</div>
+					<div><strong>Tip:</strong> Use browser console for programmatic control</div>
+				</div>
+
+				<div class="current-items">
+					<h4>Current Toolbar Items:</h4>
+					<ul id="current-items">
+						<li>Loading...</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<script type="module" src="./src/actions-and-toolbar-demo.js"></script>
+	</body>
+</html>
