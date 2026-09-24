@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document location API demo</title>
+		<style>
+			:root {
+				font-family: system-ui, sans-serif;
+				color: #1f2937;
+			}
+
+			body {
+				box-sizing: border-box;
+				max-width: 1100px;
+				margin: 0 auto;
+				padding: 24px;
+			}
+
+			.controls {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin: 16px 0;
+			}
+
+			button {
+				padding: 8px 12px;
+				cursor: pointer;
+			}
+
+			button:disabled {
+				cursor: wait;
+			}
+
+			#status {
+				min-height: 5em;
+				padding: 12px;
+				overflow-wrap: anywhere;
+				background: #f3f4f6;
+				white-space: pre-wrap;
+			}
+
+			#editor {
+				position: relative;
+				height: 520px;
+				border: 1px solid #9ca3af;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Document location API demo</h1>
+		<p>
+			Capture a portable location for <strong>portable target</strong>, navigate back to it without changing the selection, then
+			replace the document to see how stale locations are rejected.
+		</p>
+
+		<div class="controls">
+			<button id="capture" disabled>1. Capture location</button>
+			<button id="navigate" disabled>2. Navigate without selecting</button>
+			<button id="select" disabled>Compare: select match</button>
+			<button id="replace" disabled>3. Replace document and retry</button>
+			<button id="reset" disabled>Reset</button>
+		</div>
+
+		<pre id="status" aria-live="polite">Loading the SDK…</pre>
+		<div id="editor"></div>
+
+		<script src="https://document-authoring.cdn.nutrient.io/releases/document-authoring-1.22.0-umd.js"></script>
+		<script>
+			(async () => {
+				const query = 'portable target';
+				const buttons = Object.fromEntries(
+					['capture', 'navigate', 'select', 'replace', 'reset'].map((id) => [id, document.getElementById(id)]),
+				);
+				const status = document.getElementById('status');
+				let editor;
+				let match;
+				let location;
+
+				const writeStatus = (message, value) => {
+					status.textContent = value === undefined ? message : `${message}\n${JSON.stringify(value, null, 2)}`;
+				};
+
+				const createOriginalDocument = async (system) => {
+					const paragraphs = [
+						'This document has enough content to make navigation visible.',
+						...Array.from({ length: 70 }, (_, index) => `Filler paragraph ${index + 1}.`),
+						'This is the portable target.',
+					];
+					return system.createDocumentFromPlaintext(paragraphs.join('\n\n'));
+				};
+
+				const captureLocation = async () => {
+					match = undefined;
+					for (let attempt = 0; attempt < 30 && !match; attempt++) {
+						[match] = await editor.find.search(query);
+						if (!match) await new Promise((resolve) => setTimeout(resolve, 100));
+					}
+					if (!match) throw new Error(`Could not find “${query}”.`);
+
+					const savedDocument = await editor.currentDocument().saveDocument();
+					location = await DocAuth.createDocumentLocation(savedDocument, {
+						pointer: match.location.pointer,
+						range: match.location.range,
+					});
+
+					buttons.navigate.disabled = false;
+					buttons.select.disabled = false;
+					buttons.replace.disabled = false;
+					writeStatus('Captured location:', location);
+				};
+
+				try {
+					const system = await DocAuth.createDocAuthSystem({
+						// licenseKey: '<YOUR_LICENSE_KEY>',
+					});
+					editor = await system.createEditor(document.getElementById('editor'), {
+						document: await createOriginalDocument(system),
+					});
+
+					buttons.capture.onclick = () => captureLocation().catch((error) => writeStatus(error.message));
+					buttons.navigate.onclick = async () => writeStatus('navigateTo returned:', await editor.navigateTo(location));
+					buttons.select.onclick = async () => writeStatus('FindResult.select returned:', await match.select());
+					buttons.replace.onclick = async () => {
+						editor.setCurrentDocument(await system.createDocumentFromPlaintext('This is a different document snapshot.'));
+						writeStatus('navigateTo returned after the document changed:', await editor.navigateTo(location));
+						buttons.navigate.disabled = true;
+						buttons.select.disabled = true;
+						buttons.replace.disabled = true;
+					};
+					buttons.reset.onclick = async () => {
+						editor.setCurrentDocument(await createOriginalDocument(system));
+						await captureLocation();
+					};
+
+					buttons.capture.disabled = false;
+					buttons.reset.disabled = false;
+					writeStatus('Ready. Capture the location first.');
+
+					window.DocAuth = DocAuth;
+					window.docAuthSystem = system;
+					window.editor = editor;
+				} catch (error) {
+					writeStatus(`Failed to start: ${error.message}`);
+				}
+			})();
+		</script>
+	</body>
+</html>
