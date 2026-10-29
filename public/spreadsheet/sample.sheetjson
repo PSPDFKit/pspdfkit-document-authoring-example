@@ -1,0 +1,89 @@
+{
+	"type": "https://pspdfkit.com/document-authoring/persistence/spreadsheet",
+	"version": 0,
+	"spreadsheet": {
+		"sharedStrings": [
+			[{ "type": "r", "text": "Heading" }],
+			[{ "type": "r", "text": "Simple cells hold one `r` typed run containing all the text." }],
+			[
+				{ "type": "r", "text": "There is " },
+				{ "type": "r", "rPr": { "bold": true, "color": "#FF0000", "underline": "single" }, "text": "formatted" },
+				{ "type": "r", "text": " text in this cell." }
+			],
+			[{ "type": "r", "text": "Item" }],
+			[{ "type": "r", "text": "Quantity" }],
+			[{ "type": "r", "text": "Price" }],
+			[{ "type": "r", "text": "Total" }],
+			[{ "type": "r", "text": "Apples" }],
+			[{ "type": "r", "text": "Pears" }],
+			[{ "type": "r", "text": "Plums" }]
+		],
+		"formulas": [
+			{ "formula": "B6*C6", "relativeTo": "D6" },
+			{ "formula": "SUM(D6:D8)", "relativeTo": "D9" }
+		],
+		"styles": [
+			{},
+			{ "font": { "bold": true, "pointSize": 16 }, "alignment": { "horizontal": "center" } },
+			{ "font": { "bold": true }, "fill": "#DDEBF7" },
+			{ "numberFormat": "0.00" },
+			{ "font": { "bold": true } },
+			{ "font": { "bold": true }, "numberFormat": "0.00" }
+		],
+		"sheets": [
+			{
+				"name": "Sheet1",
+				"sheetId": 1,
+				"merges": ["A1:D1"],
+				"rows": [
+					{ "row": 1, "height": 24, "customHeight": true, "cells": [{ "type": "text", "col": 1, "s": 1, "si": 0 }] },
+					{ "row": 2, "cells": [{ "type": "text", "col": 1, "si": 1 }] },
+					{ "row": 3, "cells": [{ "type": "text", "col": 1, "si": 2 }] },
+					{
+						"row": 5,
+						"cells": [
+							{ "type": "text", "col": 1, "s": 2, "si": 3 },
+							{ "type": "text", "col": 2, "s": 2, "si": 4 },
+							{ "type": "text", "col": 3, "s": 2, "si": 5 },
+							{ "type": "text", "col": 4, "s": 2, "si": 6 }
+						]
+					},
+					{
+						"row": 6,
+						"cells": [
+							{ "type": "text", "col": 1, "si": 7 },
+							{ "type": "number", "col": 2, "v": 3 },
+							{ "type": "number", "col": 3, "s": 3, "v": 0.5 },
+							{ "type": "formula", "col": 4, "s": 3, "fi": 0, "v": 1.5 }
+						]
+					},
+					{
+						"row": 7,
+						"cells": [
+							{ "type": "text", "col": 1, "si": 8 },
+							{ "type": "number", "col": 2, "v": 2 },
+							{ "type": "number", "col": 3, "s": 3, "v": 0.75 },
+							{ "type": "formula", "col": 4, "s": 3, "fi": 0, "v": 1.5 }
+						]
+					},
+					{
+						"row": 8,
+						"cells": [
+							{ "type": "text", "col": 1, "si": 9 },
+							{ "type": "number", "col": 2, "v": 5 },
+							{ "type": "number", "col": 3, "s": 3, "v": 0.4 },
+							{ "type": "formula", "col": 4, "s": 3, "fi": 0, "v": 2 }
+						]
+					},
+					{
+						"row": 9,
+						"cells": [
+							{ "type": "text", "col": 1, "s": 4, "si": 6 },
+							{ "type": "formula", "col": 4, "s": 5, "fi": 1, "v": 5 }
+						]
+					}
+				]
+			}
+		]
+	}
+}

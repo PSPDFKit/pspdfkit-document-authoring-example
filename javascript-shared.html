@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document Authoring SDK</title>
+	</head>
+	<body>
+		<div>
+			<button id="headless">Create PDF headless</button>
+			<button id="docx">Load docx</button>
+			<button id="copy1to2">Copy editor1 document to editor2</button>
+		</div>
+		<!--
+            IMPORTANT: An editor target element needs to have its `position` set to a value other then the default or `static`!
+                       If unsure use `relative`.
+         -->
+		<div id="editor1" style="border: 1px solid green; width: 1024px; height: 600px; position: relative"></div>
+		<div id="editor2" style="border: 1px solid green; width: 1024px; height: 600px; position: relative"></div>
+		<script type="module" src="./src/javascript-shared-app.js"></script>
+	</body>
+</html>
